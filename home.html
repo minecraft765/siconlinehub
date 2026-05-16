@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Science Menu</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#050816;
+    overflow:hidden;
+}
+
+/* พื้นหลังอนิเมชั่น */
+body::before{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    background:
+    radial-gradient(circle,#00f0ff22 1px,transparent 1px);
+    background-size:40px 40px;
+    animation:bgMove 20s linear infinite;
+}
+
+@keyframes bgMove{
+    from{
+        transform:translate(0,0);
+    }
+    to{
+        transform:translate(-200px,-200px);
+    }
+}
+
+/* กล่องรวมปุ่ม */
+.menu{
+    position:relative;
+    z-index:2;
+    display:grid;
+    grid-template-columns:repeat(2, 320px);
+    gap:30px;
+}
+
+/* ปุ่ม */
+.cool-btn{
+    position:relative;
+    padding:25px;
+    text-align:center;
+    text-decoration:none;
+    color:white;
+    font-size:22px;
+    font-weight:bold;
+    border-radius:20px;
+    overflow:hidden;
+    transition:0.35s;
+    background:#10192d;
+    letter-spacing:1px;
+}
+
+/* เอฟเฟกต์แสง */
+.cool-btn::before{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    top:-50%;
+    left:-50%;
+    background:conic-gradient(
+        transparent,
+        #00f0ff,
+        transparent,
+        #ff00ff,
+        transparent
+    );
+    animation:spin 4s linear infinite;
+}
+
+/* ชั้นใน */
+.cool-btn::after{
+    content:"";
+    position:absolute;
+    inset:4px;
+    border-radius:16px;
+    background:#0b1020;
+    z-index:1;
+}
+
+.cool-btn span{
+    position:relative;
+    z-index:2;
+}
+
+/* Hover */
+.cool-btn:hover{
+    transform:translateY(-10px) scale(1.05);
+    box-shadow:
+        0 0 20px #00f0ff,
+        0 0 40px #00f0ff,
+        0 0 80px #ff00ff;
+}
+
+/* ตอนกด */
+.cool-btn:active{
+    transform:scale(0.95);
+}
+
+/* หมุน */
+@keyframes spin{
+    100%{
+        transform:rotate(360deg);
+    }
+}
+
+/* Ripple */
+.ripple{
+    position:absolute;
+    border-radius:50%;
+    transform:scale(0);
+    animation:rippleEffect 0.7s linear;
+    background:rgba(255,255,255,0.5);
+    pointer-events:none;
+    z-index:3;
+}
+
+@keyframes rippleEffect{
+    to{
+        transform:scale(5);
+        opacity:0;
+    }
+}
+
+/* Responsive */
+@media(max-width:800px){
+    .menu{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="menu">
+
+    <a href="m1t1.html" class="cool-btn">
+        <span>มัธยมศึกษาปีที่ 1<br>เทอม 1</span>
+    </a>
+
+    <a href="m1t2.html" class="cool-btn">
+        <span>มัธยมศึกษาปีที่ 1<br>เทอม 2</span>
+    </a>
+
+    <a href="m2t1.html" class="cool-btn">
+        <span>มัธยมศึกษาปีที่ 2<br>เทอม 1</span>
+    </a>
+
+    <a href="m2t2.html" class="cool-btn">
+        <span>มัธยมศึกษาปีที่ 2<br>เทอม 2</span>
+    </a>
+
+</div>
+
+<script>
+const buttons = document.querySelectorAll(".cool-btn");
+
+buttons.forEach(button => {
+    button.addEventListener("click", function(e){
+
+        const ripple = document.createElement("span");
+        ripple.classList.add("ripple");
+
+        const rect = button.getBoundingClientRect();
+
+        ripple.style.left = (e.clientX - rect.left) + "px";
+        ripple.style.top = (e.clientY - rect.top) + "px";
+        ripple.style.width = ripple.style.height = "150px";
+
+        button.appendChild(ripple);
+
+        setTimeout(() => {
+            ripple.remove();
+        },700);
+
+    });
+});
+</script>
+
+</body>
+</html>

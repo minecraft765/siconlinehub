@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="th">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Science Hub - วิทยาศาสตร์ ม.1</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body, #app {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0d1b2a 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #e5e7eb;
+      overflow: hidden;
+    }
+
+    .scroll-container {
+      overflow-y: auto;
+      height: 100%;
+      scroll-behavior: smooth;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .scroll-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: #ff4757;
+      border-radius: 4px;
+    }
+
+    .header-section {
+      background: linear-gradient(180deg, rgba(255, 71, 87, 0.1) 0%, transparent 100%);
+      padding: 60px 40px 40px;
+      border-bottom: 1px solid rgba(255, 71, 87, 0.2);
+    }
+
+    .header-title {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ff4757 0%, #ff7675 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-subtitle {
+      font-size: 18px;
+      color: #9ca3af;
+      margin-bottom: 30px;
+    }
+
+    .content-section {
+      padding: 40px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title svg {
+      width: 28px;
+      height: 28px;
+      color: #ff4757;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 50px;
+    }
+
+    .course-card {
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 71, 87, 0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .course-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      border-color: rgba(255, 71, 87, 0.5);
+      box-shadow: 0 20px 50px rgba(255, 71, 87, 0.3);
+    }
+
+    .course-image {
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(135deg, #ff4757 0%, #ff7675 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+    }
+
+    .course-content {
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .course-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #f3f4f6;
+    }
+
+    .course-description {
+      font-size: 14px;
+      color: #9ca3af;
+      margin-bottom: 16px;
+      flex: 1;
+    }
+
+    .course-chapters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .chapter-tag {
+      background: rgba(255, 71, 87, 0.2);
+      color: #ff7675;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .course-button {
+      background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .course-button:hover {
+      background: linear-gradient(135deg, #ff3838 0%, #ff1744 100%);
+      transform: scale(1.02);
+    }
+
+    .course-button:active {
+      transform: scale(0.98);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 71, 87, 0.3);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid rgba(255, 71, 87, 0.2);
+      padding-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #f3f4f6;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 28px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .close-button:hover {
+      color: #ff4757;
+    }
+
+    .chapter-list {
+      list-style: none;
+    }
+
+    .chapter-item {
+      background: rgba(255, 71, 87, 0.05);
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      border-left: 4px solid #ff4757;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chapter-item:hover {
+      background: rgba(255, 71, 87, 0.15);
+      transform: translateX(8px);
+    }
+
+    .chapter-number {
+      background: #ff4757;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .chapter-name {
+      color: #f3f4f6;
+      font-weight: 600;
+    }
+
+    .footer-section {
+      padding: 30px 40px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 71, 87, 0.1);
+      color: #6b7280;
+      font-size: 14px;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body>
+  <div id="app" class="scroll-container">
+   <div class="header-section">
+    <h1 class="header-title" id="siteTitle">Science Hub ม.1</h1>
+    <p class="header-subtitle" id="siteSubtitle">เรียนวิทยาศาสตร์ ม.1 ได้ง่ายๆ สำหรับนักเรียน ม.1 โรงเรียนคุระบุรีชัยพัฒนาพิทยาคม</p>
+   </div>
+   <div class="content-section">
+    <div class="section-title"><i data-lucide="beaker"></i> <span>หัวข้อวิทยาศาสตร์ ม.1 เทอม 1</span>
+    </div>
+    <div class="courses-grid" id="coursesGrid"></div>
+   </div>
+   <div class="footer-section">
+    <p>© 2026 Science Hub - สำหรับนักเรียน ม.1 โรงเรียนคุระบุรีชัยพัฒนาพิทยาคม</p>
+    <p>By Phacharadanai Buatum </p>
+    <p> Youtube  : ทัช | SkyView</p>
+    <p>Facebook : พชรดนัย บัวตุม</p>
+    <p>Gmail    : intouch129@gmail.com</p>
+    <p>SMS      : 0950950691</p>
+    <p> ID Line  : touchskyview</p>
+       
+   </div>
+  </div>
+  <div class="modal-overlay" id="modal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h2 class="modal-title" id="modalTitle">หัวข้อ</h2><button class="close-button" onclick="closeModal()">×</button>
+    </div>
+    <div id="chapterListView">
+     <ul class="chapter-list" id="chapterList"></ul>
+    </div>
+    <div id="chapterDetailView" style="display: none;">
+     <div style="margin-bottom: 24px;"><button onclick="backToChapterList()" style="background: none; border: none; color: #ff4757; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 20px;"> <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> กลับ </button>
+      <h3 id="detailChapterTitle" style="font-size: 22px; font-weight: 700; color: #f3f4f6; margin-bottom: 20px;"></h3>
+      <div id="detailContent" style="background: rgba(255, 71, 87, 0.05); padding: 20px; border-radius: 12px; border-left: 4px solid #ff4757;"></div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      site_title: "Science Hub",
+      site_subtitle: "เรียนวิทยาศาสตร์ ม.1 ได้ง่ายๆ"
+    };
+
+    let config = { ...defaultConfig };
+
+    const courses = [
+      {
+        id: 1,
+        unit: "หน่วยที่ 1",
+        name: "เรียนรู้วิทยาศาสตร์อย่างไร",
+        description: "รู้จักความหมาย ความสำคัญ และกระบวนการทางวิทยาศาสตร์",
+        emoji: "🔬",
+        chapters: [
+          {
+            title: "ความสำคัญและความหมายของวิทยาศาสตร์",
+            detail: "วิทยาศาสตร์เป็นวิทยาศาสตร์เป็นการศึกษาที่เกี่ยวกับการสังเกต การทดลอง และการค้นหาความจริง เพื่อทำความเข้าใจธรรมชาติและปรากฏการณ์ต่างๆ ในชีวิต"
+          },
+          {
+            title: "กระบวนการทำงานของนักวิทยาศาสตร์",
+            detail: "นักวิทยาศาสตร์ใช้วิธีการทางวิทยาศาสตร์ในการแก้ปัญหา ได้แก่ การตั้งคำถาม การสังเกต การสร้างสมมติฐาน การทดลอง และการสรุปผล"
+          },
+          {
+            title: "ทักษะกระบวนการทางวิทยาศาสตร์",
+            detail: "มีทักษะต่างๆ เช่น การสังเกต การวัด การเปรียบเทียบ การจำแนก การอ่านตาราง และการสรุปข้อมูลเพื่อให้เข้าใจปรากฏการณ์ทางวิทยาศาสตร์"
+          }
+        ]
+      },
+      {
+        id: 2,
+        unit: "หน่วยที่ 2",
+        name: "บทที่ 1: สมบัติของสารบริสุทธิ์",
+        description: "จุดเดือด จุดหลอมเหลว และความหนาแน่น",
+        emoji: "🌡️",
+        chapters: [
+          {
+            title: "เรื่องที่ 1 จุดเดือดและจุดหลอมเหลว",
+            detail: "จุดหลอมเหลวเป็นอุณหภูมิที่สารแข็งเปลี่ยนเป็นสารเหลว และจุดเดือดเป็นอุณหภูมิที่สารเหลวเปลี่ยนเป็นไอ สมบัติทั้งสองนี้ใช้ในการระบุและแยกความแตกต่างของสารบริสุทธิ์"
+          },
+          {
+            title: "เรื่องที่ 2 ความหนาแน่น",
+            detail: "ความหนาแน่น คือ มวลของสารต่อหน่วยปริมาตร (ρ = m/V) ความหนาแน่นเป็นสมบัติเฉพาะของสารแต่ละชนิด ซึ่งช่วยในการระบุและจำแนกสาร"
+          },
+          {
+            title: "กิจกรรมท้ายบท ทราบประเภทของพลาสติกได้อย่างไร",
+            detail: "สามารถทราบประเภทของพลาสติกได้โดยการใช้ความหนาแน่นเป็นเกณฑ์ในการแยกประเภท เช่น พลาสติก PET มีความหนาแน่นต่างจากพลาสติก HDPE"
+          }
+        ]
+      },
+      {
+        id: 3,
+        unit: "หน่วยที่ 2",
+        name: "บทที่ 2: การจำแนกและองค์ประกอบของสารบริสุทธิ์",
+        description: "สารเดี่ยว สารประกอบ โครงสร้างอะตอม และธาตุ",
+        emoji: "⚛️",
+        chapters: [
+          {
+            title: "เรื่องที่ 1 การจำแนกสารบริสุทธิ์",
+            detail: "สารบริสุทธิ์แบ่งออกเป็น 2 ประเภท ได้แก่ สารเดี่ยว (ธาตุและสารประกอบ) และสารผสม สารเดี่ยวมีองค์ประกอบเดียว ส่วนสารผสมประกอบด้วยสารตั้งแต่ 2 ชนิดขึ้นไป"
+          },
+          {
+            title: "เรื่องที่ 2 โครงสร้างอะตอม",
+            detail: "อะตอมประกอบด้วย นิวเคลียส (ประกอบด้วยโปรตอนและนิวตรอน) และอิเล็กตรอนที่โคจรรอบนิวเคลียส จำนวนโปรตอนเป็นตัวกำหนดเลขอะตอมของธาตุ"
+          },
+          {
+            title: "เรื่องที่ 3 การจำแนกธาตุและการใช้ประโยชน์",
+            detail: "ธาตุจำแนกได้เป็น โลหะ (เหล็ก ทองแดง) อโลหะ (ออกซิเจน ไนโตรเจน) และกึ่งโลหะ ที่ใช้ประโยชน์ต่างๆ ในชีวิตประจำวัน"
+          },
+          {
+            title: "กิจกรรมท้ายบท การนำธาตุไปใช้มีผลอย่างไรบ้าง",
+            detail: "ธาตุใช้ประโยชน์หลายด้าน เช่น เหล็กใช้ทำโครงสร้าง ทองแดงใช้ทำสาย ไฟฟ้า ออกซิเจนใช้ในการหายใจ และสำหรับเรียนสิ่งมีชีวิต"
+          }
+        ]
+      },
+      {
+        id: 4,
+        unit: "หน่วยที่ 3",
+        name: "บทที่ 1: เซลล์",
+        description: "การศึกษาเซลล์ด้วยกล้องจุลทรรศน์ โครงสร้าง และหน้าที่",
+        emoji: "🔍",
+        chapters: [
+          {
+            title: "เรื่องที่ 1 การศึกษาเซลล์ด้วยกล้องจุลทรรศน์",
+            detail: "กล้องจุลทรรศน์ใช้สำหรับสังเกตเซลล์ที่เล็กมากจนมองไม่เห็นด้วยตาเปล่า โดยกล้องจุลทรรศน์สามารถขยายภาพได้หลายเท่า ใช้ในการศึกษาโครงสร้างและหน้าที่ของเซลล์"
+          },
+          {
+            title: "เรื่องที่ 2 โครงสร้างและหน้าที่ของเซลล์",
+            detail: "เซลล์ประกอบด้วยส่วนต่างๆ เช่น เซลล์เมมเบรน (ควบคุมสารเข้าออก) ไซโตพลาซึม (บรรจุสารต่างๆ) และนิวเคลียส (ควบคุมการทำงานของเซลล์)"
+          },
+          {
+            title: "กิจกรรมท้ายบท แบบจำลองของเซลล์เป็นอย่างไร",
+            detail: "สามารถสร้างแบบจำลองเซลล์โดยใช้วัสดุธรรมชาติ เช่น ไข่ไก่เป็นตัวแทนของเซลล์โปรคาริโอต และเมล่อนเป็นตัวแทนของเซลล์ยูคาริโอต"
+          }
+        ]
+      },
+      {
+        id: 5,
+        unit: "หน่วยที่ 3",
+        name: "บทที่ 2: การลำเลียงสารเข้าออกเซลล์",
+        description: "การแพร่ ออสโมซิส และการเปลี่ยนแปลงน้ำหนัก",
+        emoji: "💧",
+        chapters: [
+          {
+            title: "เรื่องที่ 1 การแพร่",
+            detail: "การแพร่ (Diffusion) คือ การเคลื่อนที่ของโมเลกุลสารจากบริเวณที่มีความเข้มข้นสูงไปยังบริเวณที่มีความเข้มข้นต่ำ เพื่อให้ความเข้มข้นสมดุล"
+          },
+          {
+            title: "เรื่องที่ 2 ออสโมซิส",
+            detail: "ออสโมซิส (Osmosis) คือ การเคลื่อนที่ของน้ำผ่านเมมเบรนแบบกึ่งซึมผ่านได้ เพื่อให้ความเข้มข้นของสารละลายสมดุล ซึ่งเป็นการแพร่ของน้ำ"
+          },
+          {
+            title: "กิจกรรมท้ายบท เพราะเหตุใดน้ำหนักของไข่ไก่จึงเปลี่ยนแปลง",
+            detail: "เมื่อไข่ไก่แช่ในสารละลายไฮเปอร์โทนิก น้ำจะออกจากไข่ทำให้น้ำหนักลดลง แต่หากแช่ในสารละลายไฮโปโทนิก น้ำจะเข้าไข่ทำให้น้ำหนักเพิ่มขึ้น"
+          }
+        ]
+      },
+      {
+        id: 6,
+        unit: "หน่วยที่ 4",
+        name: "บทที่ 1: การสืบพันธุ์และการขยายพันธุ์พืชดอก",
+        description: "การสืบพันธุ์แบบอาศัยเพศและไม่อาศัยเพศ",
+        emoji: "🌸",
+        chapters: [
+          {
+            title: "เรื่องที่ 1 การสืบพันธุ์แบบอาศัยเพศและไม่อาศัยเพศของพืชดอก",
+            detail: "การสืบพันธุ์แบบอาศัยเพศ เกิดจากการผสมข่ายเพศ ส่วนการสืบพันธุ์แบบไม่อาศัยเพศ เกิดจากสัปดะของพืช เช่น เพาะเหษ หรือการสร้างอาหารสำรองในผล"
+          },
+          {
+            title: "เรื่องที่ 2 การขยายพันธุ์พืชดอก",
+            detail: "พืชดอกมีการขยายพันธุ์ทั้งแบบอาศัยเพศ (ผ่านเกสรตัวผู้และตัวเมีย) และแบบไม่อาศัยเพศ (ผ่านสัปดะ หรือเนื้อเยื่อพืช)"
+          },
+          {
+            title: "กิจกรรมท้ายบท ผลของพืชเกิดขึ้นได้อย่างไร",
+            detail: "ผลของพืชเกิดขึ้นจากการปฏิสนธิของเซลล์สืบพันธุ์เมีย ส่วนแคลิกซ์และกลีบเลี้ยงจะหลุดออก เหลือไว้เฉพาะส่วนสำเร็จรูป ซึ่งจะเจริญเติบโตเป็นผล"
+          }
+        ]
+      },
+      {
+        id: 7,
+        unit: "หน่วยที่ 4",
+        name: "บทที่ 2: การสังเคราะห์ด้วยแสง",
+        description: "ปัจจัยและผลผลิตของการสังเคราะห์ด้วยแสง",
+        emoji: "☀️",
+        chapters: [
+          {
+            title: "เรื่องที่ 1 ปัจจัยและผลผลิตของการสังเคราะห์ด้วยแสง",
+            detail: "การสังเคราะห์ด้วยแสง ต้องมีปัจจัย 3 ประการ ได้แก่ น้ำ ก๊าซคาร์บอนไดออกไซด์ และแสงแดด ผลผลิตได้แก่ น้ำตาล (กลูโคส) และก๊าซออกซิเจน"
+          },
+          {
+            title: "กิจกรรมท้ายบท อาหารของเราเกี่ยวข้องกับการสังเคราะห์ด้วยแสง",
+            detail: "อาหารของเราส่วนใหญ่มาจากพืชที่ทำการสังเคราะห์ด้วยแสง ซึ่งเป็นแหล่งพลังงาน และสารอาหารสำคัญสำหรับสัตว์ รวมถึงมนุษย์ด้วย"
+          }
+        ]
+      },
+      {
+        id: 8,
+        unit: "หน่วยที่ 4",
+        name: "บทที่ 3: การลำเลียงน้ำ ธาตุอาหาร และอาหารของพืช",
+        description: "ธาตุอาหาร การลำเลียง และผลผลิตพืช",
+        emoji: "🌿",
+        chapters: [
+          {
+            title: "เรื่องที่ 1 ธาตุอาหารของพืช",
+            detail: "พืชต้องการธาตุอาหาร เช่น ไนโตรเจน ฟอสฟอรัส และโพแทสเซียม เพื่อการเจริญเติบโตและการทำหน้าที่ต่างๆ ของเซลล์พืช"
+          },
+          {
+            title: "เรื่องที่ 2 การลำเลียงในพืช",
+            detail: "พืชลำเลียงน้ำและธาตุอาหารผ่านท่อลำเลียง (Vascular tissue) ซึ่งประกอบด้วย เซลม์ (ลำเลียงน้ำและแร่ธาตุ) และท่อปะปา (ลำเลียงอาหาร)"
+          },
+          {
+            title: "กิจกรรมท้ายบท ทำอย่างไรให้พืชมีผลผลิตตามต้องการ",
+            detail: "สามารถเพิ่มผลผลิตของพืชโดยการให้ธาตุอาหารที่เพียงพอ การให้แสงแดดเพียงพอ และการควบคุมความชื้นของดินให้เหมาะสม"
+          }
+        ]
+      }
+    ];
+
+    async function initElementSdk() {
+      if (!window.elementSdk) return;
+
+      const element = {
+        defaultConfig,
+        onConfigChange: async (newConfig) => {
+          config = newConfig;
+          document.getElementById('siteTitle').textContent = config.site_title || defaultConfig.site_title;
+          document.getElementById('siteSubtitle').textContent = config.site_subtitle || defaultConfig.site_subtitle;
+        },
+        mapToCapabilities: () => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: () => new Map([
+          ["site_title", config.site_title || defaultConfig.site_title],
+          ["site_subtitle", config.site_subtitle || defaultConfig.site_subtitle]
+        ])
+      };
+
+      window.elementSdk.init(element);
+    }
+
+    function renderCourses() {
+      const coursesGrid = document.getElementById('coursesGrid');
+      coursesGrid.innerHTML = courses.map(course => `
+        <div class="course-card">
+          <div class="course-image">${course.emoji}</div>
+          <div class="course-content">
+            <div style="font-size: 12px; color: #ff7675; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">${course.unit}</div>
+            <h3 class="course-name">${course.name}</h3>
+            <p class="course-description">${course.description}</p>
+            <div class="course-chapters">
+              <span class="chapter-tag">${course.chapters.length} บท</span>
+            </div>
+            <button class="course-button" onclick="openModal(${course.id})">
+              <i data-lucide="play" style="width: 16px; height: 16px;"></i>
+              เรียนเลย
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function openModal(courseId) {
+      const course = courses.find(c => c.id === courseId);
+      if (!course) return;
+
+      document.getElementById('modalTitle').textContent = course.name;
+      
+      const chapterList = document.getElementById('chapterList');
+      chapterList.innerHTML = course.chapters.map((chapter, index) => `
+        <li class="chapter-item" onclick="viewChapterDetail(${index})">
+          <div class="chapter-number">${index + 1}</div>
+          <div class="chapter-name">${chapter.title}</div>
+        </li>
+      `).join('');
+
+      // Show chapter list view
+      document.getElementById('chapterListView').style.display = 'block';
+      document.getElementById('chapterDetailView').style.display = 'none';
+      document.getElementById('modal').classList.add('active');
+      lucide.createIcons();
+    }
+
+    function viewChapterDetail(chapterIndex) {
+      const currentCourseName = document.getElementById('modalTitle').textContent;
+      const course = courses.find(c => c.name === currentCourseName);
+      if (!course || !course.chapters[chapterIndex]) return;
+
+      const chapter = course.chapters[chapterIndex];
+      document.getElementById('detailChapterTitle').textContent = chapter.title;
+      document.getElementById('detailContent').textContent = chapter.detail;
+
+      // Show detail view
+      document.getElementById('chapterListView').style.display = 'none';
+      document.getElementById('chapterDetailView').style.display = 'block';
+      lucide.createIcons();
+    }
+
+    function backToChapterList() {
+      document.getElementById('chapterListView').style.display = 'block';
+      document.getElementById('chapterDetailView').style.display = 'none';
+      lucide.createIcons();
+    }
+
+    document.getElementById('modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    renderCourses();
+    initElementSdk();
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9eb97370f08c37d6',t:'MTc3NjA3MjYxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
